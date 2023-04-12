@@ -25,25 +25,28 @@ class TofPublish(DTROS):
         self.range = data.range
     
     def run(self):
-        rate = rospy.Rate(15)
+        rate = rospy.Rate(20)
         while not rospy.is_shutdown():
             self.kaugus_cm = round(self.range*100, 1)
-            while self.kaugus_cm <= 10.0:
+            while self.kaugus_cm <= 20.0:
                 self.kaugus_cm = round(self.range*100, 1)
+                self.tofpub.publish("wall in progress")
+                print("Wall in progress")
                 speed.vel_right = 0
-                speed.vel_left = 0.06
+                speed.vel_left = 0.1
                 self.pub.publish(speed)
                 #time.sleep(0.5)
                 self.sein = 1
-                self.tofpub.publish("wall in progress")
+                rate.sleep()
 
             if self.sein == 1:
-                speed.vel_right = 0.45
+                speed.vel_right = 0.5
                 speed.vel_left = 0.3
                 self.pub.publish(speed)
-                time.sleep(2.5)
-                self.sein = 0
+                time.sleep(1.0)
                 self.tofpub.publish("no wall")
+                print("Wall done")
+                self.sein = 0
             rate.sleep()
 
 if __name__ == '__main__':
